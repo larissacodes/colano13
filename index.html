@@ -544,19 +544,22 @@ function desenharMapa(){
 
 // Agendas longe da capital viram atalhos no canto do mapa
 let foraAberto = false;
+// lista fixa no canto do mapa com as atividades de fora da Grande BH, de qualquer dia
 function desenharForaBH(){
   const box=$('foraBH');
-  const longe=[...grupos.entries()].filter(([k,evs])=>distKm(BH,[evs[0].lat,evs[0].lng])>45);
+  const longe=filtrados().filter(e=>e.lat!=null && distKm(BH,[e.lat,e.lng])>45);
   if(!longe.length){ box.className=''; box.innerHTML=''; return; }
-  box.innerHTML=`<button class="fora-btn" aria-expanded="${foraAberto}">Outras cidades (${longe.length})<span aria-hidden="true">${foraAberto?'▴':'▾'}</span></button>
+  const cidades=new Set(longe.map(e=>e.municipio)).size;
+  box.innerHTML=`<button class="fora-btn" aria-expanded="${foraAberto}">Outras cidades (${cidades})<span aria-hidden="true">${foraAberto?'▴':'▾'}</span></button>
     <div class="fora-lista"${foraAberto?'':' hidden'}>`+
-    longe.map(([k,evs])=>{
-      const cor=TIPOS[ORDEM_TIPO.find(t=>evs.some(e=>e.tipo===t))];
-      const txt=estado.dia? evs[0].municipio : `${evs[0].municipio}, ${fmtDia(evs[0].data,{day:'numeric',month:'numeric'})}`;
-      return `<button data-k="${k}"><span class="bola" style="background:${cor}"></span>${esc(txt)}</button>`;
-    }).join('')+'</div>';
+    longe.map(e=>`<button data-id="${e.id}"><span class="bola" style="background:${TIPOS[e.tipo]}"></span>${esc(e.municipio)}, ${fmtDia(e.data,{day:'numeric',month:'numeric'})}</button>`).join('')+'</div>';
   box.querySelector('.fora-btn').onclick=()=>{ foraAberto=!foraAberto; desenharForaBH(); };
-  box.querySelectorAll('.fora-lista button').forEach(b=>b.onclick=()=>{ abrirCard(b.dataset.k,null,true); });
+  box.querySelectorAll('.fora-lista button').forEach(b=>b.onclick=()=>{
+    const e=EVENTOS.find(x=>x.id===+b.dataset.id);
+    estado.dia=e.data; estado.mes=e.data.slice(0,7); fecharCardSilencioso();
+    atualizar(false);
+    abrirCard(chave(e), e.id, true);
+  });
   box.className='on';
 }
 
