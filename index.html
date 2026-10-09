@@ -300,8 +300,8 @@
   /* Ajustes: subtítulo, crédito, filtros por seleção e atalho de fora de BH */
   .topo p{font-size:16px}
   .topo p.credito-topo{display:block;margin-top:5px;font-size:15px}
-  #fTipos .chip[aria-pressed="false"],#fStatus .chip[aria-pressed="false"]{opacity:1}
-  #fTipos.tem-sel .chip[aria-pressed="false"],#fStatus.tem-sel .chip[aria-pressed="false"]{opacity:.45}
+  #fTipos .chip[aria-pressed="false"]{opacity:1}
+  #fTipos.tem-sel .chip[aria-pressed="false"]{opacity:.45}
   .chip[aria-pressed="true"],.chip.status[aria-pressed="true"]{border-color:var(--tinta);background:#FFF6D6;font-weight:600}
   .chip.status[aria-pressed="false"]{border-color:var(--linha)}
 
@@ -383,13 +383,9 @@
           <summary>Filtros</summary>
           <h3>Tipo de atividade</h3>
           <div class="chips" id="fTipos"></div>
-          <h3>Situação</h3>
-          <div class="chips" id="fStatus"></div>
           <h3>Frente ou regional</h3>
           <select id="fFrente"><option value="">Todas</option></select>
           <div class="acoes">
-            <button id="verBH">Ver Belo Horizonte</button>
-            <button id="verMG">Ver Minas Gerais</button>
             <button id="limpar">Limpar filtros</button>
           </div>
         </details>
@@ -466,7 +462,6 @@ const estado = {
   dia: null,                     // null = todos os dias
   mes: null,                     // 'AAAA-MM' exibido no calendário
   tiposOn: new Set(),
-  statusOn: new Set(),
   frente: '',
   cidade: '',
   cardChave: null,               // ponto aberto no card
@@ -479,7 +474,6 @@ estado.mes = (estado.dia || diasComEvento[0] || hojeISO).slice(0,7);
 function passaFiltros(e){
   if(estado.cidade && e.municipio && e.municipio!==estado.cidade) return false;
   if(estado.tiposOn.size && !estado.tiposOn.has(e.tipo)) return false;
-  if(estado.statusOn.size && !estado.statusOn.has(e.status)) return false;
   if(estado.frente && !e.frentes.includes(estado.frente)) return false;
   return true;
 }
@@ -735,15 +729,6 @@ function montarFiltros(){
       ft.classList.toggle('tem-sel', estado.tiposOn.size>0); atualizar(false); };
     ft.appendChild(b);
   });
-  const fs=$('fStatus');
-  STATUS.filter(s=>EVENTOS.some(e=>e.status===s)).forEach(s=>{
-    const b=document.createElement('button'); b.className='chip status'; b.setAttribute('aria-pressed','false');
-    b.textContent=s;
-    b.onclick=()=>{ estado.statusOn.has(s)?estado.statusOn.delete(s):estado.statusOn.add(s);
-      b.setAttribute('aria-pressed', estado.statusOn.has(s)?'true':'false');
-      fs.classList.toggle('tem-sel', estado.statusOn.size>0); atualizar(false); };
-    fs.appendChild(b);
-  });
   const cont={}; EVENTOS.forEach(e=>e.frentes.forEach(f=>cont[f]=(cont[f]||0)+1));
   Object.keys(cont).sort((a,b)=>a.localeCompare(b)).forEach(f=>{
     const o=document.createElement('option'); o.value=f; o.textContent=`${f} (${cont[f]})`; $('fFrente').appendChild(o);
@@ -762,13 +747,11 @@ function montarFiltros(){
   };
   $('btnTodos').onclick=()=>{ estado.dia=null; fecharCardSilencioso(); atualizar(true); };
   $('mesAnt').onclick=()=>mudarMes(-1); $('mesProx').onclick=()=>mudarMes(1);
-  $('verBH').onclick=()=>map.setView(BH,12);
-  $('verMG').onclick=()=>map.fitBounds(camadaMG.getBounds(),{padding:[10,10]});
   $('limpar').onclick=()=>{
-    estado.tiposOn.clear(); estado.statusOn.clear(); estado.frente=''; estado.cidade=''; $('fCidade').value='';
+    estado.tiposOn.clear(); estado.frente=''; estado.cidade=''; $('fCidade').value='';
     $('fFrente').value='';
-    document.querySelectorAll('#fTipos .chip,#fStatus .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
-    $('fTipos').classList.remove('tem-sel'); $('fStatus').classList.remove('tem-sel');
+    document.querySelectorAll('#fTipos .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
+    $('fTipos').classList.remove('tem-sel');
     fecharCardSilencioso(); atualizar(true);
   };
 }
