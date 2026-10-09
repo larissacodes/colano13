@@ -347,25 +347,8 @@
        appearance:none;-webkit-appearance:none;
        background:var(--amarelo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0h10L5 6z' fill='%231A1A1A'/%3E%3C/svg%3E") right 12px center/9px no-repeat}
   #fCidade:hover{background-color:#FFE14D}
-
-  /* painel mais compacto: calendário e filtros cabem sem rolagem na maioria das telas */
-  .dia{aspect-ratio:1/.6;font-size:clamp(13px,4.8cqi,17px)}
-  .dia .qtd{margin-top:1px;font-size:clamp(8px,2.7cqi,10px)}
-  .cal-nav{margin-bottom:6px;padding:6px 10px}
-  .cal-nav h2{font-size:clamp(17px,6cqi,20px)}
-  .cal-nav button{width:28px;height:28px;font-size:16px}
-  .cal-sem{padding:0 0 2px;font-size:12px}
-  .cal-rodape{margin-top:6px;padding-bottom:9px}
-  .cal-rodape button{padding:4px 11px}
-  .filtros{position:relative;margin-top:8px}
-  .filtros summary{padding:2px 0 2px}
-  .filtros h3{margin:7px 0 4px}
-  .chips{gap:5px}
-  .chip{padding:4px 10px;font-size:12.5px}
-  select{padding:6px 10px}
-  .acoes{position:absolute;top:0;right:0;margin:0}
-  .acoes button{flex:none;min-width:0;padding:4px 11px;border-radius:20px;font-size:12px}
-  @media (min-width:1180px){ .col-cal{padding-top:10px;padding-bottom:6px} }
+  /* calendário 4 px mais baixo, só na barra do mês */
+  .cal-nav{padding:8px 12px}
 </style>
 </head>
 <body>
