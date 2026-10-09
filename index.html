@@ -821,7 +821,7 @@ function proximaFrase(){
   box.classList.add('troca');
   setTimeout(trocar, 350);
 }
-function rodarFrases(){ clearInterval(fraseTimer); fraseTimer = setInterval(proximaFrase, 9000); }
+function rodarFrases(){ clearInterval(fraseTimer); fraseTimer = setInterval(proximaFrase, 6000); }
 $('frase').onclick = () => { proximaFrase(); rodarFrases(); };
 $('frase').onmouseenter = () => clearInterval(fraseTimer);
 $('frase').onmouseleave = rodarFrases;
