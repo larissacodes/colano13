@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>COLA NO 13</title>
-<meta name="description" content="Agenda de rua da campanha do Lula em Minas Gerais, com mapa e calendário das atividades.">
+<meta name="description" content="Agenda de campanha do Lula em Minas Gerais, com mapa e calendário das atividades.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -6 40 40'><rect width='40' height='28' rx='3' fill='%2312A82C'/><polygon points='20,4 35,14 20,24 5,14' fill='%23FFD400'/><circle cx='20' cy='14' r='5.8' fill='%230033CC'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -322,7 +322,7 @@
 
   /* Ajustes: subtítulo, crédito, filtros por seleção e atalho de fora de BH */
   .topo p{font-size:15px}
-  .topo p.credito-topo{display:block;margin-top:4px;font-size:12.5px}
+  .topo p.credito-topo{display:block;margin-top:5px;font-size:14px}
   #fTipos .chip[aria-pressed="false"],#fStatus .chip[aria-pressed="false"]{opacity:1}
   #fTipos.tem-sel .chip[aria-pressed="false"],#fStatus.tem-sel .chip[aria-pressed="false"]{opacity:.45}
   .chip[aria-pressed="true"],.chip.status[aria-pressed="true"]{border-color:var(--tinta);background:#FFF6D6;font-weight:600}
@@ -342,7 +342,7 @@
     <header class="topo">
       <div class="topo-titulo">
         <h1 class="marca">Cola no <span>13</span><svg class="bandeira" viewBox="0 0 40 28" role="img" aria-label="Bandeira do Brasil"><rect width="40" height="28" rx="3" fill="#12A82C"/><polygon points="20,4 35,14 20,24 5,14" fill="#FFD400"/><circle cx="20" cy="14" r="5.8" fill="#0033CC"/><path d="M14.6 12.6 Q20 11.2 25.4 15.2" fill="none" stroke="#fff" stroke-width="1.2"/></svg></h1>
-        <p>Agenda de rua do Lula em Minas Gerais</p>
+        <p>Agenda de campanha do Lula em Minas Gerais</p>
         <p class="credito-topo">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz</a></p>
       </div>
       <button type="button" class="frase" id="frase" title="Clique para ver outra frase">
@@ -758,7 +758,10 @@ const FRASES = [
   {t:'Não serei interrompida.', a:'Marielle Franco', ano:2018},
   {t:'Para que serve a utopia? Serve para isso: para caminhar.', a:'Eduardo Galeano', ano:1993},
   {t:'Quando a mulher negra se movimenta, toda a estrutura da sociedade se movimenta com ela.', a:'Angela Davis', ano:2017},
-  {t:'A injustiça em qualquer lugar é uma ameaça à justiça em todo lugar.', a:'Martin Luther King Jr.', ano:1963}
+  {t:'A injustiça em qualquer lugar é uma ameaça à justiça em todo lugar.', a:'Martin Luther King Jr.', ano:1963},
+  {t:'Nenhuma família sem casa. Nenhum camponês sem terra! Nenhum trabalhador sem direitos!', a:'Papa Francisco', ano:2014},
+  {t:'Não poderá haver paz sem justiça, e os pobres recordam-nos isso de muitas maneiras.', a:'Papa Leão XIV', ano:2025},
+  {t:'A caridade é uma força que muda a realidade, um autêntico poder histórico de transformação.', a:'Papa Leão XIV', ano:2025}
 ];
 let fraseI = Math.floor(Math.random()*FRASES.length), fraseTimer;
 const fraseSemFade = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
