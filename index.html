@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>COLA NO 13</title>
 <meta name="description" content="Agenda de rua da campanha do Lula em Minas Gerais, com mapa e calendário das atividades.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FFD400'/><text x='50' y='70' font-size='56' font-family='Arial' font-weight='700' text-anchor='middle' fill='%23E30613'>13</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -6 40 40'><rect width='40' height='28' rx='3' fill='%2312A82C'/><polygon points='20,4 35,14 20,24 5,14' fill='%23FFD400'/><circle cx='20' cy='14' r='5.8' fill='%230033CC'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800..900&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -319,6 +319,21 @@
   .card-ev.foco{background:#FFF6D6}
   .card-ev .quando{color:var(--azul)}
   #foraBH{border-left:4px solid var(--verde)}
+
+  /* Ajustes: subtítulo, crédito, filtros por seleção e atalho de fora de BH */
+  .topo p{font-size:15px}
+  .topo p.credito-topo{display:block;margin-top:4px;font-size:12.5px}
+  #fTipos .chip[aria-pressed="false"],#fStatus .chip[aria-pressed="false"]{opacity:1}
+  #fTipos.tem-sel .chip[aria-pressed="false"],#fStatus.tem-sel .chip[aria-pressed="false"]{opacity:.45}
+  .chip[aria-pressed="true"],.chip.status[aria-pressed="true"]{border-color:var(--tinta);background:#FFF6D6;font-weight:600}
+  .chip.status[aria-pressed="false"]{border-color:var(--linha)}
+  #foraBH{padding:0;border:none;background:none;box-shadow:none;max-width:230px;text-align:right}
+  #foraBH .fora-btn{display:inline-flex;width:auto;gap:6px;padding:5px 11px;border-radius:20px;background:var(--amarelo);color:var(--tinta);
+       font-size:12px;font-weight:600;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+  #foraBH .fora-btn:hover{background:#FFE14D;color:var(--tinta)}
+  #foraBH .fora-lista{margin-top:6px;padding:6px 12px;max-height:50vh;overflow-y:auto;border-radius:10px;background:#fff;
+       box-shadow:0 2px 10px rgba(0,0,0,.18);text-align:left}
+  #foraBH .fora-lista button{font-size:13px}
 </style>
 </head>
 <body>
@@ -353,8 +368,6 @@
 
         <details class="filtros" id="filtrosBox" open>
           <summary>Filtros</summary>
-          <label class="patrus-toggle"><input type="checkbox" id="soLula"> Mostrar só agendas com o Lula</label>
-          <label class="patrus-toggle lula-toggle"><input type="checkbox" id="soPatrus"> Mostrar só agendas com o Patrus</label>
           <h3>Tipo de atividade</h3>
           <div class="chips" id="fTipos"></div>
           <h3>Situação</h3>
@@ -434,10 +447,8 @@ const diasComEvento = [...new Set(EVENTOS.map(e=>e.data))].sort();
 const estado = {
   dia: null,                     // null = todos os dias
   mes: null,                     // 'AAAA-MM' exibido no calendário
-  tiposOff: new Set(),
-  statusOff: new Set(),
-  soPatrus: false,
-  soLula: false,
+  tiposOn: new Set(),
+  statusOn: new Set(),
   frente: '',
   cardChave: null,               // ponto aberto no card
   eventoFoco: null
@@ -447,10 +458,8 @@ estado.dia = diasComEvento.includes(hojeISO) ? hojeISO : (diasComEvento.find(d=>
 estado.mes = (estado.dia || diasComEvento[0] || hojeISO).slice(0,7);
 
 function passaFiltros(e){
-  if(estado.tiposOff.has(e.tipo)) return false;
-  if(estado.statusOff.has(e.status)) return false;
-  if(estado.soPatrus && !e.patrus) return false;
-  if(estado.soLula && !e.lula) return false;
+  if(estado.tiposOn.size && !estado.tiposOn.has(e.tipo)) return false;
+  if(estado.statusOn.size && !estado.statusOn.has(e.status)) return false;
   if(estado.frente && !e.frentes.includes(estado.frente)) return false;
   return true;
 }
@@ -460,7 +469,7 @@ const doPeriodo = () => filtrados().filter(e=> !estado.dia || e.data===estado.di
 /* ---------- Mapa ---------- */
 const map = L.map('map',{zoomControl:true,zoomSnap:0.25}).setView(BH,11);
 // crédito da autoria no canto de atribuição, antes das fontes do mapa
-map.attributionControl.setPrefix('<span class="credito">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz</a></span> | <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
   attribution:'Tiles &copy; Esri', maxZoom:16
 }).addTo(map);
@@ -509,17 +518,20 @@ function desenharMapa(){
 }
 
 // Agendas longe da capital viram atalhos no canto do mapa
+let foraAberto = false;
 function desenharForaBH(){
   const box=$('foraBH');
   const longe=[...grupos.entries()].filter(([k,evs])=>distKm(BH,[evs[0].lat,evs[0].lng])>45);
   if(!longe.length){ box.className=''; box.innerHTML=''; return; }
-  box.innerHTML=`<strong>${estado.dia?'Fora da Grande BH neste dia':'Fora da Grande BH'}</strong>`+
+  box.innerHTML=`<button class="fora-btn" aria-expanded="${foraAberto}">Fora da Grande BH (${longe.length})<span aria-hidden="true">${foraAberto?'▴':'▾'}</span></button>
+    <div class="fora-lista"${foraAberto?'':' hidden'}>`+
     longe.map(([k,evs])=>{
       const cor=TIPOS[ORDEM_TIPO.find(t=>evs.some(e=>e.tipo===t))];
       const txt=estado.dia? evs[0].municipio : `${evs[0].municipio}, ${fmtDia(evs[0].data,{day:'numeric',month:'numeric'})}`;
       return `<button data-k="${k}"><span class="bola" style="background:${cor}"></span>${esc(txt)}</button>`;
-    }).join('');
-  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ abrirCard(b.dataset.k,null,true); });
+    }).join('')+'</div>';
+  box.querySelector('.fora-btn').onclick=()=>{ foraAberto=!foraAberto; desenharForaBH(); };
+  box.querySelectorAll('.fora-lista button').forEach(b=>b.onclick=()=>{ abrirCard(b.dataset.k,null,true); });
   box.className='on';
 }
 
@@ -689,18 +701,20 @@ function montarFiltros(){
   const ft=$('fTipos');
   ORDEM_TIPO.forEach(t=>{
     const n=EVENTOS.filter(e=>e.tipo===t).length;
-    const b=document.createElement('button'); b.className='chip'; b.setAttribute('aria-pressed','true');
+    const b=document.createElement('button'); b.className='chip'; b.setAttribute('aria-pressed','false');
     b.innerHTML=`<span class="bola" style="background:${TIPOS[t]}"></span>${esc(t)} (${n})`;
-    b.onclick=()=>{ estado.tiposOff.has(t)?estado.tiposOff.delete(t):estado.tiposOff.add(t);
-      b.setAttribute('aria-pressed', estado.tiposOff.has(t)?'false':'true'); atualizar(false); };
+    b.onclick=()=>{ estado.tiposOn.has(t)?estado.tiposOn.delete(t):estado.tiposOn.add(t);
+      b.setAttribute('aria-pressed', estado.tiposOn.has(t)?'true':'false');
+      ft.classList.toggle('tem-sel', estado.tiposOn.size>0); atualizar(false); };
     ft.appendChild(b);
   });
   const fs=$('fStatus');
   STATUS.filter(s=>EVENTOS.some(e=>e.status===s)).forEach(s=>{
-    const b=document.createElement('button'); b.className='chip status'; b.setAttribute('aria-pressed','true');
+    const b=document.createElement('button'); b.className='chip status'; b.setAttribute('aria-pressed','false');
     b.textContent=s;
-    b.onclick=()=>{ estado.statusOff.has(s)?estado.statusOff.delete(s):estado.statusOff.add(s);
-      b.setAttribute('aria-pressed', estado.statusOff.has(s)?'false':'true'); atualizar(false); };
+    b.onclick=()=>{ estado.statusOn.has(s)?estado.statusOn.delete(s):estado.statusOn.add(s);
+      b.setAttribute('aria-pressed', estado.statusOn.has(s)?'true':'false');
+      fs.classList.toggle('tem-sel', estado.statusOn.size>0); atualizar(false); };
     fs.appendChild(b);
   });
   const cont={}; EVENTOS.forEach(e=>e.frentes.forEach(f=>cont[f]=(cont[f]||0)+1));
@@ -708,16 +722,15 @@ function montarFiltros(){
     const o=document.createElement('option'); o.value=f; o.textContent=`${f} (${cont[f]})`; $('fFrente').appendChild(o);
   });
   $('fFrente').onchange=e=>{ estado.frente=e.target.value; atualizar(false); };
-  $('soPatrus').onchange=e=>{ estado.soPatrus=e.target.checked; atualizar(true); };
-  $('soLula').onchange=e=>{ estado.soLula=e.target.checked; atualizar(true); };
   $('btnTodos').onclick=()=>{ estado.dia=null; fecharCardSilencioso(); atualizar(true); };
   $('mesAnt').onclick=()=>mudarMes(-1); $('mesProx').onclick=()=>mudarMes(1);
   $('verBH').onclick=()=>map.setView(BH,12);
   $('verMG').onclick=()=>map.fitBounds(camadaMG.getBounds(),{padding:[10,10]});
   $('limpar').onclick=()=>{
-    estado.tiposOff.clear(); estado.statusOff.clear(); estado.soPatrus=false; estado.soLula=false; estado.frente='';
-    $('soPatrus').checked=false; $('soLula').checked=false; $('fFrente').value='';
-    document.querySelectorAll('#fTipos .chip,#fStatus .chip').forEach(c=>c.setAttribute('aria-pressed','true'));
+    estado.tiposOn.clear(); estado.statusOn.clear(); estado.frente='';
+    $('fFrente').value='';
+    document.querySelectorAll('#fTipos .chip,#fStatus .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
+    $('fTipos').classList.remove('tem-sel'); $('fStatus').classList.remove('tem-sel');
     fecharCardSilencioso(); atualizar(true);
   };
 }
