@@ -212,6 +212,7 @@
   .topo h1.marca{display:flex;align-items:center;gap:8px;font-family:var(--larga);font-stretch:125%;font-weight:900;font-size:28px;
        line-height:1;letter-spacing:0;text-transform:uppercase;color:var(--vermelho)}
   .marca span{padding:3px 8px 2px;border-radius:4px;background:var(--amarelo)}
+  .marca .bandeira{height:1.02em;width:auto;flex:none;margin-left:2px}
 
   .frase{min-height:0;padding:2px 0 2px 14px;border:none;border-left:3px solid var(--amarelo);border-radius:0;background:none}
   .frase-texto{font-size:17px;font-weight:600;color:var(--tinta)}
@@ -223,7 +224,7 @@
   .dia{color:#CFC9C9;border-radius:8px}
   .dia.tem{color:var(--tinta);background:#FDECEC}
   .dia.tem:hover{background:#F9D4D6}
-  .dia.hoje{box-shadow:inset 0 0 0 2px var(--azul)}
+  .dia.hoje{box-shadow:inset 0 0 0 2px var(--vermelho-escuro)}
   .dia.sel,.dia.sel:hover{background:var(--vermelho);color:#fff}
   .dia .qtd{color:var(--cinza);opacity:1}
   .dia .estrela{color:var(--vermelho)}
@@ -268,6 +269,56 @@
   .pin.sel{box-shadow:0 0 0 4px var(--amarelo),0 1px 4px rgba(0,0,0,.4)}
   :focus-visible{outline-color:var(--azul)}
   @media (max-width:520px){ .topo h1.marca{font-size:24px} }
+
+  /* Cor de volta, com as quatro cores da campanha */
+  .credito-topo a,.leaflet-control-attribution .credito a{color:#E30613 !important;font-weight:700}
+  .leaflet-control-attribution .credito{color:var(--tinta)}
+
+  .cal{border:none;padding:0;overflow:hidden;box-shadow:0 0 0 1px var(--linha)}
+  .cal-nav{margin:0 0 10px;padding:10px 12px;background:var(--vermelho);color:#fff}
+  .cal-nav button{border-color:rgba(255,255,255,.6);color:#fff}
+  .cal-nav button:hover{background:rgba(255,255,255,.18)}
+  .cal-grid{padding:0 12px}
+  .cal-rodape{padding:0 12px 12px}
+  .dia .ponto-lula,.leg-lula{background:var(--amarelo);box-shadow:0 0 0 1.5px var(--azul)}
+  .dia.sel .ponto-lula{box-shadow:none}
+  .cal-rodape button[aria-pressed="true"]{background:var(--vermelho);border-color:var(--vermelho)}
+
+  .filtros summary{color:var(--azul)}
+  .filtros h3{color:var(--verde-escuro);text-transform:uppercase;font-size:12px;letter-spacing:.5px}
+  .patrus-toggle{margin-top:4px;padding:9px 12px;border-radius:8px;background:#E6ECFF;font-weight:600;color:var(--azul-escuro)}
+  .patrus-toggle input{accent-color:var(--azul)}
+  .patrus-toggle.lula-toggle{margin-top:6px;padding:9px 12px;background:#FDECEC;font-weight:600;color:var(--vermelho-escuro)}
+  .patrus-toggle.lula-toggle input{accent-color:var(--vermelho)}
+  .chip[aria-pressed="true"]{border-color:var(--tinta)}
+  .acoes button{border-color:var(--azul);color:var(--azul)}
+  .acoes button:hover{background:var(--azul);border-color:var(--azul);color:#fff}
+  .acoes #limpar{border-color:var(--linha);color:var(--cinza)}
+  .acoes #limpar:hover{background:none;border-color:var(--vermelho);color:var(--vermelho)}
+
+  .lista-topo{border-bottom:3px solid var(--amarelo)}
+  .lista-topo h2{color:var(--azul)}
+  .grupo-dia{display:inline-block;padding:3px 10px;border-radius:4px;background:var(--verde);color:#fff}
+  .ev-hora{color:var(--vermelho)}
+  .ev.ativo{background:#FFF6D6;box-shadow:inset 4px 0 0 var(--amarelo)}
+  .ev-tags{gap:5px}
+  .tag{padding:2px 8px;border-radius:20px;background:var(--fundo);font-size:11.5px;font-weight:600;color:var(--tinta)}
+  .tag.tipo{display:inline-block;color:#fff}
+  .tag.patrus{background:var(--vermelho);color:#fff}
+  .tag.lula{background:var(--azul);color:var(--amarelo)}
+  .tag.pendente{background:#FFF1B8;color:#6B4E00}
+  .tag.realizada{background:#DDF3E1;color:#0B5E18}
+  .tag.cancelada{background:#ECEAEA;color:#5E5656}
+
+  .card-topo{background:var(--vermelho);color:#fff;border:none}
+  .card-topo.lula{background:var(--azul);color:#fff;border:none}
+  .card-topo p{color:#fff}
+  .card-topo.lula p{color:var(--amarelo)}
+  .card-fechar{background:rgba(255,255,255,.2);color:#fff}
+  .card-fechar:hover{background:rgba(255,255,255,.35)}
+  .card-ev.foco{background:#FFF6D6}
+  .card-ev .quando{color:var(--azul)}
+  #foraBH{border-left:4px solid var(--verde)}
 </style>
 </head>
 <body>
@@ -275,9 +326,9 @@
   <aside id="painel">
     <header class="topo">
       <div class="topo-titulo">
-        <h1 class="marca">Cola no <span>13</span></h1>
+        <h1 class="marca">Cola no <span>13</span><svg class="bandeira" viewBox="0 0 40 28" role="img" aria-label="Bandeira do Brasil"><rect width="40" height="28" rx="3" fill="#12A82C"/><polygon points="20,4 35,14 20,24 5,14" fill="#FFD400"/><circle cx="20" cy="14" r="5.8" fill="#0033CC"/><path d="M14.6 12.6 Q20 11.2 25.4 15.2" fill="none" stroke="#fff" stroke-width="1.2"/></svg></h1>
         <p>Agenda de rua do Lula em Minas Gerais</p>
-        <p class="credito-topo">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz Aguiar</a></p>
+        <p class="credito-topo">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz</a></p>
       </div>
       <button type="button" class="frase" id="frase" title="Clique para ver outra frase">
         <span class="frase-texto" id="fraseTexto"></span>
@@ -300,7 +351,7 @@
           </div>
         </div>
 
-        <details class="filtros" id="filtrosBox">
+        <details class="filtros" id="filtrosBox" open>
           <summary>Filtros</summary>
           <label class="patrus-toggle"><input type="checkbox" id="soLula"> Mostrar só agendas com o Lula</label>
           <label class="patrus-toggle lula-toggle"><input type="checkbox" id="soPatrus"> Mostrar só agendas com o Patrus</label>
@@ -409,7 +460,7 @@ const doPeriodo = () => filtrados().filter(e=> !estado.dia || e.data===estado.di
 /* ---------- Mapa ---------- */
 const map = L.map('map',{zoomControl:true,zoomSnap:0.25}).setView(BH,11);
 // crédito da autoria no canto de atribuição, antes das fontes do mapa
-map.attributionControl.setPrefix('<span class="credito">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz Aguiar</a></span> | <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+map.attributionControl.setPrefix('<span class="credito">Mapa por <a href="https://www.linkedin.com/in/larissadinizaguiar/" target="_blank" rel="noopener">Larissa Diniz</a></span> | <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
   attribution:'Tiles &copy; Esri', maxZoom:16
 }).addTo(map);
@@ -499,7 +550,7 @@ function tagsEvento(e){
   return [
     e.lula?'<span class="tag lula">★ Com o Lula</span>':'',
     e.patrus?'<span class="tag patrus">Com o Patrus</span>':'',
-    `<span class="tag tipo"><i style="background:${TIPOS[e.tipo]}"></i>${esc(e.tipo)}</span>`,
+    `<span class="tag tipo" style="background:${TIPOS[e.tipo]}${e.tipo==='Bandeiraço e adesivaço'?';color:#1A1A1A':''}">${esc(e.tipo)}</span>`,
     e.status==='Pendente de confirmação'?'<span class="tag pendente">A confirmar</span>':
     e.status==='Realizada'?'<span class="tag realizada">Realizada</span>':
     e.status==='Cancelada'?'<span class="tag cancelada">Cancelada</span>':'',
