@@ -354,6 +354,9 @@
   .filtros{position:relative}
   .acoes{position:absolute;top:2px;right:0;margin:0}
   .acoes button{flex:none;min-width:0;padding:5px 12px;border-radius:20px;font-size:12.5px}
+
+  /* filtro de cidade ocupando a linha toda */
+  #fCidade{width:100%;padding-top:7px;padding-bottom:7px}
 </style>
 </head>
 <body>
@@ -403,7 +406,6 @@
           <h2 id="listaTitulo"></h2>
           <div class="lista-linha">
             <select id="fCidade" aria-label="Filtrar por cidade"></select>
-            <p id="listaResumo"></p>
           </div>
         </div>
         <ol id="lista"></ol>
@@ -685,11 +687,7 @@ function fecharCardSilencioso(){ estado.cardChave=null; estado.eventoFoco=null; 
 /* ---------- Lista ---------- */
 function desenharLista(){
   const evs=doPeriodo(), ul=$('lista');
-  const nLula=evs.filter(e=>e.lula).length, nSemLocal=evs.filter(e=>e.precisao==='sem local').length;
   $('listaTitulo').textContent = estado.dia ? fmtDia(estado.dia,{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase()) : 'Todos os dias';
-  $('listaResumo').textContent = evs.length
-    ? `${evs.length} atividade${evs.length>1?'s':''}${nLula?`, ${nLula} com o Lula`:''}${nSemLocal?`, ${nSemLocal} com local a definir`:''}`
-    : '';
   if(!evs.length){
     ul.innerHTML=`<li class="vazio-msg">Nenhuma atividade com esses filtros${estado.dia?' neste dia':''}. Escolha outro dia no calendário ou use Limpar filtros.</li>`;
     return;
@@ -702,7 +700,7 @@ function desenharLista(){
     html+=`<li class="ev${e.status==='Cancelada'?' cancelada':''}" data-id="${e.id}" tabindex="0">
       <div class="ev-hora${h1?'':' dia-todo'}">${esc(h1||'Dia todo')}${h2?`<small>até ${esc(h2)}</small>`:''}</div>
       <div><div class="ev-titulo">${esc(e.atividade)}</div>
-        <div class="ev-local">${esc(e.local||'Local a definir')}${e.municipio&&e.municipio!=='Belo Horizonte'&&e.municipio!==e.local?`, ${esc(e.municipio)}`:''}</div>
+        <div class="ev-local">${esc(e.local||'Local a definir')}${e.municipio && !(e.local||'').includes(e.municipio) ? `, ${esc(e.municipio)}` : ''}</div>
         <div class="ev-tags">${tagsEvento(e)}</div>
         <span class="ver-mapa">${e.lat!=null?'Ver no mapa':'Ver detalhes'} ›</span></div>
     </li>`;
